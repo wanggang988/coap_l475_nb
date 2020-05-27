@@ -1,0 +1,34 @@
+作者:王刚
+注意事项：主要是TOKEN的获取。
+关键函数有以下：
+/* 发送完数据后发送CTRL+Z 没有\r\n*/
+void nbraw_send(void)
+{
+	char cmd = 0x1a;
+    Buffer_Lpuart1RecvClear();
+    Mcu_UartxSendString(huart2,&cmd);                                     //通过UART2串口输出log信息
+    HAL_Delay(10);
+    Mcu_UartxSendString(hlpuart1,&cmd);
+    HAL_Delay(300);
+}
+/* Post message */
+void bc28_coapmsg_post(char * msg)
+{
+
+    Buffer_Lpuart1RecvClear();                                           //清除LPUART1接收缓存区
+    Mcu_UartxSendString(huart2,msg);                               //通过UART2串口输出log信息
+    HAL_Delay(10);
+    Mcu_UartxSendString(hlpuart1,msg);                             //ATE0 echo mode on
+    HAL_Delay(500);
+}
+/* 发送deviceID和apikeyID */
+void bc28_coapmsg_key(char * deviceid,char * apikey)
+{
+    char cmd[256] = {0};
+    sprintf(cmd,"{\"deviceId\":\"%s\",\"apikey\":\"%s\"}",deviceid,apikey);
+    Buffer_Lpuart1RecvClear();                                           //清除LPUART1接收缓存区
+    Mcu_UartxSendString(huart2,cmd);                               //通过UART2串口输出log信息
+    HAL_Delay(10);
+    Mcu_UartxSendString(hlpuart1,cmd);                             //ATE0 echo mode on
+    HAL_Delay(500);
+}
